@@ -1,0 +1,19 @@
+{
+  "name": "canteen-backend",
+  "version": "1.0.0",
+  "description": "Smart Canteen Management System Backend with Express and PostgreSQL",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
