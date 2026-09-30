@@ -1,3 +1,4 @@
+
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -10,17 +11,31 @@ const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
+// CORS
 const allowedOrigins = [
   "https://canteen-frontend-2udm.onrender.com",
   "http://localhost:5173",
   "http://localhost:3000",
-  process.env.CLIENT_URL,
 ].filter(Boolean);
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      // Allow requests with no origin
+      // such as Postman or server-to-server requests
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
