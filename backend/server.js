@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://canteen-frontend-2udm.onrender.com",
   })
 );
 
