@@ -10,8 +10,7 @@ import {
   TriangleAlert,
   CircleAlert,
 } from "lucide-react";
-
-const API_BASE_URL ="http://localhost:5000/api";
+import { API_BASE_URL } from "../../config/api";
 
 const DashCards = () => {
   const [data, setData] = useState(null);

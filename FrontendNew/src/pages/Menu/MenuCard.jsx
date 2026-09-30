@@ -10,8 +10,7 @@ import {
   Trash2,
   Power,
 } from "lucide-react";
-
-const API_BASE_URL = "http://localhost:5000/api";
+import { API_BASE_URL } from "../../config/api";
 
 const categories = [
   ["Breakfast", Coffee, "07:30 - 10:00"],

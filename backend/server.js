@@ -10,9 +10,17 @@ const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 
+const allowedOrigins = [
+  "https://canteen-frontend-2udm.onrender.com",
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: "https://canteen-frontend-2udm.onrender.com",
+    origin: allowedOrigins,
+    credentials: true,
   })
 );
 
