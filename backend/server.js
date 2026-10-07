@@ -13,7 +13,6 @@ const app = express();
 
 // CORS
 const allowedOrigins = [
-  "https://canteen-frontend-2udm.onrender.com",
   "http://localhost:5173",
   "http://localhost:3000",
 ].filter(Boolean);
