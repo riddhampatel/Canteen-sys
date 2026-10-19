@@ -13,6 +13,8 @@ const app = express();
 // CORS Configuration
 const allowedOrigins = [
   "http://localhost:5173",
+   "https://canteen-frontend-2udm.onrender.com",
+  process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(
