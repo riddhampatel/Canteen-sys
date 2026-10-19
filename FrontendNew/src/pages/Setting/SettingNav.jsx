@@ -1,10 +1,9 @@
 import React from "react";
 import { Search, Bell, HelpCircle } from "lucide-react";
 
-const SettingNav = () => {
+const SettingNav = ({ search, setSearch }) => {
   return (
-   <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40">
-  
+    <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40">
       <div className="flex items-center gap-4">
         <span className="text-xl font-bold text-primary">Canteen Admin</span>
       </div>

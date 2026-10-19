@@ -18,13 +18,13 @@ const NAV_ITEMS = [
 
 const SettingSidebar = () => {
   return (
-   <aside className="w-64 h-screen bg-surface-container-lowest border-r border-outline-variant py-6 px-5 fixed left-0 top-0 z-40 flex flex-col">
+    <aside className="w-64 h-screen bg-surface-container-lowest border-r border-outline-variant py-6 px-5 fixed left-0 top-0 z-40 flex flex-col">
       {/* Brand Area */}
       <div className="flex items-center gap-3 px-2 mb-8">
         <div className="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
           <Utensils size={20} />
         </div>
-          <div className="overflow-hidden">
+        <div className="overflow-hidden">
           <h1 className="text-[20px] font-bold text-primary leading-tight truncate">
             Canteen<br></br>Admin
           </h1>
@@ -35,7 +35,7 @@ const SettingSidebar = () => {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex flex-col gap-2 flex-grow">
+      <nav className="flex flex-col gap-2 grow">
         {NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           return (

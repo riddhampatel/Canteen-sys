@@ -1,15 +1,14 @@
 import DashNav from "./DashNav.jsx";
 import DashCards from "./DashCard.jsx";
 import DashSidebar from "./DashSidebar.jsx";
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [search, setSearch] = useState("");
   return (
     <div className="flex-1 flex flex-col w-full min-h-screen bg-surface">
-        {/* <DashSidebar/> */}
-      <DashNav />
-      <DashCards />
+      <DashNav search={search} />
+      <DashCards search={search} setSearch={setSearch} />
     </div>
   );
 }
-
-

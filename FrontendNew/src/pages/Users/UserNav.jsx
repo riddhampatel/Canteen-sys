@@ -1,7 +1,7 @@
 import React from "react";
 import { Search, Filter, Bell } from "lucide-react";
 
-const UserNav = () => {
+const UserNav = ({ search = "", setSearch }) => {
   return (
     <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40">
       <div className="flex items-center gap-6 flex-1">
@@ -12,27 +12,20 @@ const UserNav = () => {
         {/* Search & Filter Cluster */}
         <div className="flex-1 max-w-2xl flex items-center gap-3.5 ml-5">
           <div className="relative flex-1">
+            {/* Search Icon (Only sizing & position classes, no value/onChange here) */}
             <Search
               size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-outline pointer-events-none"
             />
+            {/* Real Search Input */}
             <input
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by name, ID, or department..."
-            //   className="w-full h-11 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-lg text-sm text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/60"
-            // 
-            className="w-full h-11 pl-10 pr-4 border border-outline-variant rounded-lg text-sm text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/60"
-         
+              className="w-full h-11 pl-10 pr-4 bg-surface-container-low border border-outline-variant rounded-lg text-sm text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/60"
             />
           </div>
-
-          <button
-            type="button"
-            className="h-11 px-4 bg-surface-container-low border border-outline-variant rounded-lg flex items-center gap-2 hover:bg-surface-container transition-colors text-on-surface-variant text-sm font-semibold cursor-pointer"
-          >
-            <Filter size={18} />
-            <span>Filters</span>
-          </button>
         </div>
       </div>
 

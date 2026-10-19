@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import Papa from "papaparse";
 import {
   Filter,
   Download,
@@ -10,6 +10,33 @@ import {
   Banknote,
 } from "lucide-react";
 import { API_BASE_URL } from "../../config/api";
+
+const DateFilter = ({ period, onPeriodChange }) => {
+  const options = [
+    { value: "today", label: "Today" },
+    { value: "week", label: "This Week" },
+    { value: "month", label: "This Month" },
+  ];
+
+  return (
+    <div className="flex bg-surface-container-low rounded-lg p-1 border border-outline-variant">
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          onClick={() => onPeriodChange(opt.value)}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            period === opt.value
+              ? "bg-primary text-on-primary shadow-xs"
+              : "text-on-surface-variant hover:text-on-surface"
+          }`}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+};
 
 function Kpi({ icon: Icon, label, value, trend }) {
   return (
@@ -34,10 +61,12 @@ function Kpi({ icon: Icon, label, value, trend }) {
   );
 }
 
-export default function TransactionCard() {
+// Search prop is for global search
+export default function TransactionCard({ search = "" }) {
   const [data, setData] = useState(null);
   const [users, setUsers] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [period, setPeriod] = useState("week"); // "today" | "week" | "month"
 
   const [form, setForm] = useState({
     user_id: "",
@@ -50,13 +79,15 @@ export default function TransactionCard() {
   async function loadData() {
     try {
       const [transactions, userResult] = await Promise.all([
-        fetch(`${API_BASE_URL}/transactions`).then(async (response) => {
-          const result = await response.json();
-          if (!response.ok) {
-            throw new Error(result.error || "API request failed");
-          }
-          return result;
-        }),
+        fetch(`${API_BASE_URL}/transactions?period=${period}`).then(
+          async (response) => {
+            const result = await response.json();
+            if (!response.ok) {
+              throw new Error(result.error || "API request failed");
+            }
+            return result;
+          },
+        ),
         fetch(`${API_BASE_URL}/users`).then(async (response) => {
           const result = await response.json();
           if (!response.ok) {
@@ -86,7 +117,6 @@ export default function TransactionCard() {
           ...item,
           employee_name: item.employee_name || "Canteen User",
           emp_id: item.emp_id || "-",
-
           formatted_date: item.created_at
             ? new Date(item.created_at).toLocaleString()
             : "-",
@@ -99,9 +129,10 @@ export default function TransactionCard() {
     }
   }
 
+  // Refetches whenever period changes
   useEffect(() => {
     loadData();
-  }, []);
+  }, [period]);
 
   async function createTransaction(event) {
     event.preventDefault();
@@ -127,14 +158,56 @@ export default function TransactionCard() {
       });
 
       setShowForm(false);
-
       await loadData();
     } catch (requestError) {
       setError(requestError.message);
     }
   }
 
+  // CSV report export
+  const handleExportCSV = () => {
+    if (!data?.transactions?.length) {
+      alert("No transaction records available to export.");
+      return;
+    }
+
+    const csv = Papa.unparse(
+      data.transactions.map((item) => ({
+        "Employee Name": item.employee_name,
+        "Employee ID": item.emp_id,
+        "Meal Type": item.meal_type,
+        "Amount (₹)": item.amount,
+        "Date & Time": item.formatted_date,
+      })),
+    );
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Billing_Report_${period}_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   const kpis = data?.kpis || {};
+
+  // Search filtering logic
+  const searchText = (search || "").toLowerCase().trim();
+  const allTransactions = data?.transactions || [];
+
+  const filteredTransactions = searchText
+    ? allTransactions.filter(
+        (item) =>
+          (item.employee_name || "").toLowerCase().includes(searchText) ||
+          (item.emp_id || "").toLowerCase().includes(searchText) ||
+          (item.meal_type || "").toLowerCase().includes(searchText) ||
+          String(item.amount || "").includes(searchText) ||
+          (item.formatted_date || "").toLowerCase().includes(searchText),
+      )
+    : allTransactions;
 
   return (
     <div className="p-8 max-w-7xl mx-auto w-full flex flex-col gap-8">
@@ -144,21 +217,21 @@ export default function TransactionCard() {
           <h2 className="text-4xl font-bold text-on-background mb-1">
             Billing & Transactions
           </h2>
-
           <p className="text-[17px] text-on-surface-variant">
-            Live consumption and billing records.
+            Live consumption and billing records for{" "}
+            {period === "today"
+              ? "Today"
+              : period === "week"
+                ? "This Week"
+                : "This Month"}
+            .
           </p>
         </div>
 
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg text-sm font-semibold">
-            <Filter size={18} />
-            Filter
-          </button>
-
           <button
-            onClick={() => window.print()}
-            className="flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold"
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-90 transition cursor-pointer"
           >
             <Download size={18} />
             Export Report
@@ -166,7 +239,7 @@ export default function TransactionCard() {
 
           <button
             onClick={() => setShowForm((visible) => !visible)}
-            className="flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold"
+            className="flex items-center gap-2 px-6 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-90 transition cursor-pointer"
           >
             {showForm ? "Close" : "Record Meal"}
           </button>
@@ -188,13 +261,13 @@ export default function TransactionCard() {
                 user_id: event.target.value,
               })
             }
-            className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+            className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm outline-none focus:border-primary"
           >
             <option value="">Select employee</option>
-
             {users.map((user) => (
               <option key={user.id} value={user.id}>
-                {user.name} ({user.emp_id})
+                {/* {user.name} ({user.emp_id}) */}
+                {user.name}
               </option>
             ))}
           </select>
@@ -207,7 +280,7 @@ export default function TransactionCard() {
                 meal_type: event.target.value,
               })
             }
-            className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+            className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm outline-none focus:border-primary"
           >
             <option>Breakfast</option>
             <option>Lunch</option>
@@ -228,39 +301,34 @@ export default function TransactionCard() {
               })
             }
             placeholder="Amount"
-            className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+            className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm outline-none focus:border-primary"
           />
 
           <button
             type="submit"
-            className="bg-primary text-on-primary rounded-lg font-semibold text-sm"
+            className="bg-primary text-on-primary rounded-lg font-semibold text-sm hover:opacity-90 transition cursor-pointer"
           >
             Save Transaction
           </button>
         </form>
       )}
 
-      {/* Error */}
-      {error && <p className="text-sm text-error">{error}</p>}
-
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Kpi
           icon={Utensils}
-          label="Total Meals"
+          label={"Total meals"}
           value={kpis.totalMeals?.toLocaleString() || "--"}
           trend="12%"
         />
 
         <Kpi
           icon={Banknote}
-          label="Total Billing"
+          label={`Total Billing`}
           value={
             kpis.totalBilling == null
               ? "--"
-              : `₹${Number(kpis.totalBilling).toLocaleString("en-IN", {
-                  minimumFractionDigits: 2,
-                })}`
+              : `₹${kpis.totalBilling.toLocaleString()}`
           }
           trend="8%"
         />
@@ -273,16 +341,12 @@ export default function TransactionCard() {
         />
       </div>
 
-      {/* Daily Log */}
+      {/* Transaction Log Table */}
       <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xs overflow-hidden">
-        <div className="flex justify-between items-center px-6 py-3.5 border-b border-outline-variant">
-          <div className="text-sm font-semibold text-primary border-b-2 border-primary pb-2">
-            Daily Log
-          </div>
-
-          <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-            Today
-            <Calendar size={16} />
+        {/* Table Header with DateFilter */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 px-6 py-3.5 border-b border-outline-variant">
+          <div className="text-sm font-semibold text-primary border-b-2 border-primary pb-2 sm:pb-0">
+            Transaction Logs
           </div>
         </div>
 
@@ -293,15 +357,12 @@ export default function TransactionCard() {
                 <th className="px-6 py-4 text-xs text-on-surface-variant uppercase">
                   Employee
                 </th>
-
                 <th className="px-6 py-4 text-xs text-on-surface-variant uppercase">
                   Date & Time
                 </th>
-
                 <th className="px-6 py-4 text-xs text-on-surface-variant uppercase">
                   Meal Type
                 </th>
-
                 <th className="px-6 py-4 text-xs text-on-surface-variant uppercase text-right">
                   Amount
                 </th>
@@ -309,14 +370,13 @@ export default function TransactionCard() {
             </thead>
 
             <tbody>
-              {(data?.transactions || []).map((item) => (
+              {filteredTransactions.map((item) => (
                 <tr
                   key={item.id}
-                  className="border-b border-outline-variant/60"
+                  className="border-b border-outline-variant/60 hover:bg-surface-container-low transition-colors"
                 >
                   <td className="px-6 py-4">
                     <strong>{item.employee_name}</strong>
-
                     <span className="block text-xs text-outline font-mono">
                       {item.emp_id}
                     </span>
@@ -324,7 +384,11 @@ export default function TransactionCard() {
 
                   <td className="px-6 py-4 text-sm">{item.formatted_date}</td>
 
-                  <td className="px-6 py-4">{item.meal_type}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-full text-xs font-medium">
+                      {item.meal_type}
+                    </span>
+                  </td>
 
                   <td className="px-6 py-4 text-sm font-bold text-right">
                     ₹{item.amount}
@@ -332,13 +396,15 @@ export default function TransactionCard() {
                 </tr>
               ))}
 
-              {data?.transactions?.length === 0 && (
+              {filteredTransactions.length === 0 && (
                 <tr>
                   <td
                     colSpan="4"
                     className="px-6 py-8 text-center text-sm text-on-surface-variant"
                   >
-                    No transactions found.
+                    {searchText
+                      ? `No transactions matching "${search}"`
+                      : "No transactions found for this period."}
                   </td>
                 </tr>
               )}

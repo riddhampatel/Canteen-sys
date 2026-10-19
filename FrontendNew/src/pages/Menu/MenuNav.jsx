@@ -1,16 +1,19 @@
 import React from "react";
 import { Bell, HelpCircle, Search } from "lucide-react";
 
-const MenuNav = () => {
+const MenuNav = ({ search, setSearch }) => {
   return (
-   <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40">
+    <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40">
       <div className="flex items-center gap-6">
-        <div className="font-bold text-2xl text-primary">
-          CanteenPro
-        </div>
+        <div className="font-bold text-2xl text-primary">CanteenPro</div>
         <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-outline" />
+          <Search
+            size={18}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-outline"
+          />
           <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             className="pl-10 pr-4 py-2 bg-surface-container-low rounded-full border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary text-sm w-64 text-on-surface placeholder:text-outline transition-all"
             placeholder="Search menus, items..."
             type="text"
@@ -23,7 +26,7 @@ const MenuNav = () => {
           type="button"
           aria-label="Notifications"
           className="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors cursor-pointer active:opacity-80"
-        > 
+        >
           <Bell size={20} />
         </button>
 

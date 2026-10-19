@@ -1,14 +1,14 @@
 import React from "react";
-import UserSidebar from "./UserSidebar";
 import UserNav from "./UserNav";
 import UserCard from "./UserCard";
+import { useState } from "react";
 
 const User = () => {
+  const [search, setSearch] = useState("");
   return (
     <>
-      {/* <UserSidebar /> */}
-      <UserNav />
-      <UserCard />
+      <UserNav search={search} setSearch={setSearch} />
+      <UserCard search={search} />
     </>
   );
 };

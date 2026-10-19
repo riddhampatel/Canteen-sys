@@ -1,124 +1,438 @@
 import React, { useEffect, useState } from "react";
+import Papa from "papaparse";
 import {
   ArrowUp,
   Utensils,
   BriefcaseBusiness,
   CircleCheck,
-  Dot,
   Search,
   Check,
   TriangleAlert,
   CircleAlert,
+  Download,
 } from "lucide-react";
 import { API_BASE_URL } from "../../config/api";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
+
+// Date filter tabs component
+const DateFilter = ({ period, onPeriodChange }) => {
+  const options = [
+    { value: "today", label: "Today" },
+    { value: "week", label: "This Week" },
+    { value: "month", label: "This Month" },
+  ];
+
+  return (
+    <div className="inline-flex bg-surface-container-low rounded-lg p-1 border border-outline-variant shadow-xs">
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          onClick={() => onPeriodChange(opt.value)}
+          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+            period === opt.value
+              ? "bg-primary text-on-primary shadow-xs"
+              : "text-on-surface-variant hover:text-on-surface"
+          }`}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+// Meal theme colors
+const MEAL_COLORS = {
+  breakfast: "#2563eb", // Blue
+  lunch: "#16a34a", // Green
+  snacks: "#f59e0b", // Amber
+  dinner: "#8b5cf6", // Purple
+};
 
 const DashCards = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const [period, setPeriod] = useState("today"); // today and week and month
+
+  const loadDashboard = async () => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/dash/stats?period=${period}`,
+      );
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "API request failed");
+      setData(result);
+      setError("");
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  };
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/dash/stats`)
-      .then(async (response) => {
-        const result = await response.json();
-        if (!response.ok) {
-          throw new Error(result.error || "API request failed");
-        }
-        return result;
-      })
-      .then(setData)
-      .catch((requestError) => setError(requestError.message));
-  }, []);
+    loadDashboard();
+  }, [period]);
 
-  const stats = data?.stats;
+  // Derived data
+  const stats = data?.stats || {};
   const recent = data?.whoAteToday || [];
+  const alerts = data?.alerts || [];
+
+  const recentFiltered = recent.filter((item) =>
+    item.employee_name?.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  // CSV Report export
+  const handleExportCSV = () => {
+    if (!recentFiltered.length) {
+      alert("No records available to export.");
+      return;
+    }
+
+    const csv = Papa.unparse(
+      recentFiltered.map((item) => ({
+        Employee: item.employee_name,
+        Department: item.department,
+        Time: item.time,
+        "Meal Type": item.meal_type,
+        Status: item.status,
+      })),
+    );
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "Meals_Report.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const getChartData = () => {
+    if (period === "today") {
+      return [
+        {
+          label: "Today",
+          breakfast: recent.filter((i) => i.meal_type === "Breakfast").length,
+          lunch: recent.filter((i) => i.meal_type === "Lunch").length,
+          snacks: recent.filter((i) => i.meal_type === "Snacks").length,
+          dinner: recent.filter((i) => i.meal_type === "Dinner").length,
+        },
+      ];
+    }
+
+    const rawTrend = data?.dailyTrend || [];
+    return rawTrend.map((item) => {
+      const count = item.count || 0;
+
+      return {
+        label: period === "month" ? item.display_date : item.label,
+
+        breakfast:
+          item.breakfast !== null && item.breakfast !== undefined
+            ? item.breakfast
+            : null,
+
+        lunch:
+          item.lunch !== null && item.lunch !== undefined ? item.lunch : null,
+
+        snacks:
+          item.snacks !== null && item.snacks !== undefined
+            ? item.snacks
+            : null,
+
+        dinner:
+          item.dinner !== null && item.dinner !== undefined
+            ? item.dinner
+            : null,
+      };
+    });
+  };
+
+  const chartData = getChartData();
+
+  const barSize = period === "today" ? 100 : period === "week" ? 14 : 7;
 
   return (
     <main className="flex-1 flex flex-col w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-8 max-w-7xl">
-      {/* ================= Stats Grid ================= */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {/* Stat Card 1 */}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-2xl font-bold text-on-surface">
+            Dashboard Overview
+          </h1>
+          <p className="text-sm text-on-surface-variant">
+            Monitoring meal service
+          </p>
+        </div>
+      </div>
+
+      {/* KPI Cards */}
+      {/* <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  
         <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex items-start justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
-              Total Meals Today
+              Total Meals
             </div>
             <div className="text-4xl font-bold text-primary">
-              {stats?.totalMealsToday?.toLocaleString() || "--"}
+              {stats.totalMealsToday?.toLocaleString() || "--"}
             </div>
             <div className="text-sm text-secondary mt-2 flex items-center gap-1">
               <ArrowUp size={16} className="text-emerald-600" />
-              <span className="text-emerald-600 font-semibold">12%</span>
-              <span>vs yesterday</span>
+              <span>meal consumption</span>
             </div>
           </div>
-
           <div className="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center shrink-0">
             <Utensils size={22} />
           </div>
         </div>
 
-        {/* Stat Card 2 */}
         <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex items-start justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
               Active Employees
             </div>
             <div className="text-4xl font-bold text-primary">
-              {stats?.activeEmployees?.toLocaleString() || "--"}
+              {stats.activeEmployees?.toLocaleString() || "--"}
             </div>
             <div className="text-sm text-secondary mt-2 flex items-center gap-1">
               <span className="text-outline text-base font-bold">-</span>
-              <span>Stable capacity</span>
+              <span>Current employees</span>
             </div>
           </div>
-
           <div className="w-12 h-12 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center shrink-0">
             <BriefcaseBusiness size={22} />
           </div>
         </div>
 
-        {/* Stat Card 3 */}
         <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex items-start justify-between">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
               Today's Menu Status
             </div>
             <div className="text-4xl font-bold text-primary">
-              {stats?.menuStatus || "--"}
+              {stats.menuStatus || "--"}
             </div>
             <div className="text-sm text-secondary mt-2 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-              <span>All stations operational</span>
+              <span>Menu service</span>
             </div>
           </div>
-
           <div className="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0">
             <CircleCheck size={22} />
           </div>
         </div>
+      </section> */}
+
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        {/* Total Meals */}
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 lg:p-6 flex items-start justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 sm:mb-2 truncate">
+              Total Meals
+            </div>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary truncate">
+              {stats.totalMealsToday?.toLocaleString() || "--"}
+            </div>
+            <div className="text-xs sm:text-sm text-secondary mt-1.5 sm:mt-2 flex items-center gap-1">
+              <ArrowUp size={16} className="text-emerald-600 shrink-0" />
+              <span className="truncate">meal consumption</span>
+            </div>
+          </div>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+            <Utensils className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+          </div>
+        </div>
+
+        {/* Active Employees */}
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 lg:p-6 flex items-start justify-between gap-3 sm:gap-4">
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 sm:mb-2 truncate">
+              Active Employees
+            </div>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary truncate">
+              {stats.activeEmployees?.toLocaleString() || "--"}
+            </div>
+            <div className="text-xs sm:text-sm text-secondary mt-1.5 sm:mt-2 flex items-center gap-1">
+              <span className="text-outline text-sm sm:text-base font-bold">
+                -
+              </span>
+              <span className="truncate">Current employees</span>
+            </div>
+          </div>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center shrink-0">
+            <BriefcaseBusiness className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+          </div>
+        </div>
+
+        {/* Menu Status */}
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 lg:p-6 flex items-start justify-between gap-3 sm:gap-4 sm:col-span-2 lg:col-span-1">
+          <div className="min-w-0 flex-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 sm:mb-2 truncate">
+              Today's Menu Status
+            </div>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary truncate">
+              {stats.menuStatus || "--"}
+            </div>
+            <div className="text-xs sm:text-sm text-secondary mt-1.5 sm:mt-2 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+              <span className="truncate">Menu service</span>
+            </div>
+          </div>
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0">
+            <CircleCheck className="w-5 h-5 sm:w-5.5 sm:h-5.5" />
+          </div>
+        </div>
       </section>
 
-      {/* ================= Complex Section: Table & Alerts ================= */}
+      {/* Main Bar Chart  */}
+      <section className="grid grid-cols-1 gap-6 mb-8">
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <div>
+              <h2 className="font-bold text-xl text-on-surface">
+                {period === "today"
+                  ? "Today's Meal Volume"
+                  : period === "week"
+                    ? "Weekly Meal Volume"
+                    : "Monthly Meal Volume"}
+              </h2>
+              <p className="text-sm text-on-surface-variant mt-1">
+                Meal visual reperentatino
+              </p>
+            </div>
+
+            <DateFilter period={period} onPeriodChange={setPeriod} />
+          </div>
+
+          <div className="h-80 w-full">
+            {chartData && chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={chartData}
+                  barGap={period === "today" ? 10 : 3}
+                  barCategoryGap={period === "today" ? "25%" : "15%"}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="#e5e7eb"
+                    vertical={false}
+                  />
+                  {/* <XAxis
+  dataKey="label"
+  interval={0}
+  tick={{ fontSize: 10 }}
+/> */}
+                  <XAxis
+                    dataKey="label"
+                    interval={0}
+                    tick={{ fontSize: 9 }}
+                    angle={period === "month" ? -50 : 0}
+                    textAnchor={period === "month" ? "end" : "start"}
+                    height={period === "month" ? 50 : 30}
+                  />
+
+                  <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
+                  <Tooltip />
+
+                  <Legend
+                    verticalAlign="top"
+                    align="right"
+                    iconType="circle"
+                    layout="auto"
+                    wrapperStyle={{ paddingTop: "14px", fontSize: "13px" }}
+                  />
+
+                  <Bar
+                    dataKey="breakfast"
+                    name="Breakfast"
+                    fill={MEAL_COLORS.breakfast}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={barSize}
+                  />
+                  <Bar
+                    dataKey="lunch"
+                    name="Lunch"
+                    fill={MEAL_COLORS.lunch}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={barSize}
+                  />
+                  <Bar
+                    dataKey="snacks"
+                    name="Snacks"
+                    fill={MEAL_COLORS.snacks}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={barSize}
+                  />
+                  <Bar
+                    dataKey="dinner"
+                    name="Dinner"
+                    fill={MEAL_COLORS.dinner}
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={barSize}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-sm text-on-surface-variant">
+                No meal data available for this period.
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Table & Alerts Section */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Table Area */}
+        {/* Table */}
         <div className="lg:col-span-2 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm flex flex-col overflow-hidden">
           <div className="p-6 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2 className="font-bold text-2xl text-on-surface">
               Who Ate Today
             </h2>
 
-            <div className="relative w-full sm:w-64">
-              <Search
-                size={18}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
-              />
-              <input
-                className="bg-surface w-full pl-10 pr-4 py-2 border border-outline-variant rounded-md text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
-                placeholder="Search employee..."
-                type="text"
-              />
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button
+                onClick={handleExportCSV}
+                className="flex items-center justify-center gap-2 px-5 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-90 transition cursor-pointer"
+              >
+                <Download size={18} />
+                Dashboard Report
+              </button>
+
+              <div className="relative w-full sm:w-64">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
+                />
+                <input
+                  className="bg-surface w-full pl-10 pr-4 py-2 border border-outline-variant rounded-md text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                  placeholder="Search employee..."
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
             </div>
           </div>
+
+          {error && (
+            <div className="p-4 bg-error-container text-on-error-container text-sm">
+              {error}
+            </div>
+          )}
 
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -139,38 +453,55 @@ const DashCards = () => {
                 </tr>
               </thead>
               <tbody className="text-sm">
-                {recent.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-outline-variant hover:bg-surface-container-low transition-colors"
-                  >
-                    <td className="p-4 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs shrink-0">
-                        {item.initials}
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm text-on-surface">
-                          {item.employee_name}
+                {recentFiltered.length > 0 ? (
+                  recentFiltered.map((item) => (
+                    <tr
+                      key={item.id}
+                      className="border-b border-outline-variant hover:bg-surface-container-low transition-colors"
+                    >
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs shrink-0">
+                            {item.initials}
+                          </div>
+                          <div>
+                            <div className="font-medium text-sm text-on-surface">
+                              {item.employee_name}
+                            </div>
+                            <div className="text-on-surface-variant text-xs">
+                              {item.department}
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-on-surface-variant text-xs">
-                          {item.department}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-4 text-on-surface-variant">{item.time}</td>
-                    <td className="p-4">
-                      <span className="px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-full text-xs font-medium">
-                        {item.meal_type}
-                      </span>
-                    </td>
-                    <td className="p-4">
-                      <span className="flex items-center gap-1 text-emerald-600 font-medium text-xs">
-                        <Check size={16} />
-                        {item.status}
-                      </span>
+                      </td>
+                      <td className="p-4 text-on-surface-variant">
+                        {item.time}
+                      </td>
+                      <td className="p-4">
+                        <span className="px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-full text-xs font-medium">
+                          {item.meal_type}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <span className="flex items-center gap-1 text-emerald-600 font-medium text-xs">
+                          <Check size={16} />
+                          {item.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="p-8 text-center text-sm text-on-surface-variant"
+                    >
+                      {search
+                        ? "No employees found."
+                        : "No meals recorded today."}
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
@@ -185,32 +516,26 @@ const DashCards = () => {
         {/* System Alerts */}
         <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex flex-col gap-6">
           <h2 className="font-bold text-xl text-on-surface">System Alerts</h2>
-          {error && <p className="text-sm text-error">{error}</p>}
-
           <div className="flex flex-col gap-4">
-            {/* Warning Alert */}
             <div className="flex gap-3.5 items-start p-4 bg-error-container rounded-lg border border-red-200">
               <TriangleAlert size={20} className="text-error mt-0.5 shrink-0" />
               <div>
                 <div className="font-semibold text-sm text-on-error-container">
-                  {data?.alerts?.[0]?.title || "No active alerts"}
+                  {alerts[0]?.title || "No active alerts"}
                 </div>
                 <div className="text-xs text-on-error-container mt-1 opacity-85">
-                  {data?.alerts?.[0]?.message || "No local alerts are active."}
+                  {alerts[0]?.message || "No local alerts are active."}
                 </div>
               </div>
             </div>
-
-            {/* Info Alert */}
             <div className="flex gap-3.5 items-start p-4 bg-surface-container-low rounded-lg border border-outline-variant">
               <CircleAlert size={20} className="text-primary mt-0.5 shrink-0" />
               <div>
                 <div className="font-semibold text-sm text-on-surface">
-                  {data?.alerts?.[1]?.title || "Menu service connected"}
+                  {alerts[1]?.title || "Dashboard connected"}
                 </div>
                 <div className="text-xs text-on-surface-variant mt-1">
-                  {data?.alerts?.[1]?.message ||
-                    "dashboard data is ready for review."}
+                  {alerts[1]?.message || "Dashboard data is ready for review."}
                 </div>
               </div>
             </div>

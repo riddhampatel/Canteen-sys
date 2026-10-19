@@ -11,7 +11,6 @@ import {
 const UserSidebar = () => {
   return (
     <aside className="w-64 h-screen bg-surface-container-lowest border-r border-outline-variant py-6 px-4 fixed left-0 top-0 z-40 flex flex-col">
-  
       <div className="flex items-center gap-3 mb-8 px-2">
         <div className="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center shrink-0 shadow-xs">
           <Utensils size={20} />
@@ -26,7 +25,6 @@ const UserSidebar = () => {
         </div>
       </div>
 
-    
       <nav className="flex-1 flex flex-col gap-2">
         <NavLink
           to="/dashboard"

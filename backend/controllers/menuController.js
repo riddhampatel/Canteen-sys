@@ -1,20 +1,44 @@
 const pool = require("../db");
 
+// const getMenu = async (req, res) => {
+//   const result = await pool.query(`
+//       SELECT *
+//       FROM menu_items
+//       WHERE date = CURRENT_DATE
+//       ORDER BY meal_type, id
+//     `);
+
+//   const menu = result.rows.reduce((gMenu, item) => {
+//     gMenu[item.meal_type] ??= [];
+//     gMenu[item.meal_type].push(item);
+//     return gMenu;
+//   }, {});
+
+//   res.json({ menu });
+// };
 const getMenu = async (req, res) => {
-  const result = await pool.query(`
-      SELECT *
-      FROM menu_items
-      WHERE date = CURRENT_DATE
-      ORDER BY meal_type, id
-    `);
+  try {
+    const { date } = req.query;
+    const targetDate = date || null;
 
-  const menu = result.rows.reduce((groupedMenu, item) => {
-    groupedMenu[item.meal_type] ??= [];
-    groupedMenu[item.meal_type].push(item);
-    return groupedMenu;
-  }, {});
+    const query = targetDate
+      ? `SELECT * FROM menu_items WHERE date = $1 ORDER BY meal_type, id`
+      : `SELECT * FROM menu_items WHERE date = CURRENT_DATE ORDER BY meal_type, id`;
+    
+    const params = targetDate ? [targetDate] : [];
+    const result = await pool.query(query, params);
 
-  res.json({ menu });
+    const menu = result.rows.reduce((gMenu, item) => {
+      gMenu[item.meal_type] ??= [];
+      gMenu[item.meal_type].push(item);
+      return gMenu;
+    }, {});
+
+    res.json({ menu });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to load menu" });
+  }
 };
 
 const addMenuItem = async (req, res) => {
