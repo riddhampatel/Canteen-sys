@@ -290,48 +290,63 @@ const SettingCard = ({ search = "" }) => {
               </form>
             )}
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+              <table className="w-full text-left min-w-130">
                 <thead>
-                  <tr className="border-b border-outline-variant text-sm text-on-surface-variant">
-                    <th className="py-3 text-xl">User</th>
-                    <th className="py-3 text-xl">Role</th>
-                    <th className="py-3 text-xl">Permissions</th>
+                  <tr className="border-b border-outline-variant text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                    <th className="py-3 text-xl px-3">User</th>
+                    <th className="py-3 text-xl px-3">Role</th>
+                    <th className="py-3 text-xl px-3">Permissions</th>
                     <th />
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody className="divide-y divide-outline-variant/40">
                   {(data?.staff || []).map((person) => (
                     <tr
                       key={person.id}
                       className="border-b border-outline-variant/50"
                     >
-                      <td className="py-3 flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-xs font-bold">
-                          {person.name.slice(0, 2).toUpperCase()}
+                      {/* <td className="py-3 flex items-center gap-3"> */}
+                      <td className="py-3 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center text-xs font-bold shrink-0">
+                            {person.name
+                              ? person.name.slice(0, 2).toUpperCase()
+                              : "US"}
+                          </div>
+
+                          <div className="min-w-0">
+                            <strong className="block text-sm font-semibold text-on-surface truncate">
+                              {person.name}
+                            </strong>
+                            <small className="block text-xs text-on-surface-variant truncate">
+                              {person.email}
+                            </small>
+                          </div>
                         </div>
-
-                        <span>
-                          <strong className="block">{person.name}</strong>
-                          <small className="text-on-surface-variant">
-                            {person.email}
-                          </small>
-                        </span>
                       </td>
-
-                      <td className="py-3">
-                        <span className="bg-primary-container text-on-primary-container px-2.5 py-1 rounded text-xs font-semibold">
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <span className=" inline-block bg-primary-container text-on-primary-container px-2.5 py-1 rounded-md text-xs font-semibold">
                           {person.role}
                         </span>
                       </td>
 
-                      <td className="py-3 text-sm text-on-surface-variant">
+                      <td className="py-3 px-3 text-xs sm:text-sm text-on-surface-variant">
                         {person.permissions}
                       </td>
 
-                      <td className="py-3 text-right">
+                      {/* <td className="py-3 text-right">
                         <Pencil size={16} />
+                      </td> */}
+                      <td className="py-3 px-3 text-right">
+                        <button
+                          type="button"
+                          className="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-colors cursor-pointer"
+                          title="Edit User"
+                        >
+                          <Pencil size={15} />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -342,33 +357,34 @@ const SettingCard = ({ search = "" }) => {
         </div>
 
         <section>
-          <div className="lg:col-span-1 flex flex-col gap-8">
+          <div className="lg:col-span-1 flex flex-col gap-5 sm:gap-6 w-full">
             {/* 3. General Preferences */}
-            <section className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant p-6">
-              <div className="mb-4 border-b border-outline-variant/60 pb-3">
-                <h3 className="text-lg font-bold text-on-surface flex items-center gap-2">
-                  <Sliders size={18} className="text-primary" />
+            <section className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant p-4 sm:p-5">
+              <div className="mb-3 sm:md-4 border-b border-outline-variant/60 pb-3">
+                <h3 className="text-base sm:text-lg font-bold text-on-surface flex items-center gap-2">
+                  <Sliders size={18} className="text-primary shrink-0" />
                   General Preferences
                 </h3>
               </div>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-1.5 sm:gap-2">
                 {/* Toggle 1 */}
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors">
-                  <div>
+                <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer select-none">
+                  <div className="min-w-0 pr-3">
                     <div className="text-sm font-semibold text-on-surface">
                       Auto-publish Menus
                     </div>
-                    <div className="text-xs text-on-surface-variant">
+                    <div className="text-xs text-on-surface-variant leading-tight">
                       Publish menus on approval.
                     </div>
                   </div>
+
                   <button
                     type="button"
                     role="switch"
                     aria-checked={autoPublish}
                     onClick={() => setAutoPublish(!autoPublish)}
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                    className={` shrink-0 w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer focuse:outline-none focus:ring-2 focus:ring-primary/40 ${
                       autoPublish ? "bg-primary" : "bg-outline-variant"
                     }`}
                   >
@@ -381,21 +397,25 @@ const SettingCard = ({ search = "" }) => {
                 </div>
 
                 {/* Toggle 2 */}
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors">
+                <div className="flex items-center justify-between p-2.5 sm:p-3 rounded-lg hover:bg-surface-container-low transition-colors select-none">
                   <div>
                     <div className="text-sm font-semibold text-on-surface">
                       Allow Guest Orders
                     </div>
-                    <div className="text-xs text-on-surface-variant">
+                    <div className="text-xs text-on-surface-variant leading-tight">
                       Enable unregistered checkouts.
                     </div>
                   </div>
+
                   <button
                     type="button"
                     role="switch"
                     aria-checked={allowGuest}
-                    onClick={() => setAllowGuest(!allowGuest)}
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAllowGuest(!allowGuest);
+                    }}
+                    className={`shrink-0 w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 ${
                       allowGuest ? "bg-primary" : "bg-outline-variant"
                     }`}
                   >
@@ -408,21 +428,28 @@ const SettingCard = ({ search = "" }) => {
                 </div>
 
                 {/* Toggle 3 */}
-                <div className="flex items-center justify-between p-3 rounded-lg hover:bg-surface-container-low transition-colors">
-                  <div>
+                <div
+                  onClick={() => setMaintenance(!maintenance)}
+                  className="flex items-center justify-between p-2.5 sm:p-3 rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer select-none"
+                >
+                  <div className="min-w-0 pr-3">
                     <div className="text-sm font-semibold text-on-surface">
                       Maintenance Mode
                     </div>
-                    <div className="text-xs text-on-surface-variant">
+                    <div className="text-xs text-on-surface-variant leading-tight">
                       Disable user-facing apps.
                     </div>
                   </div>
+
                   <button
                     type="button"
                     role="switch"
                     aria-checked={maintenance}
-                    onClick={() => setMaintenance(!maintenance)}
-                    className={`w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMaintenance(!maintenance);
+                    }}
+                    className={`shrink-0 w-11 h-6 flex items-center rounded-full p-1 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-error/40 ${
                       maintenance ? "bg-error" : "bg-outline-variant"
                     }`}
                   >
@@ -437,30 +464,38 @@ const SettingCard = ({ search = "" }) => {
             </section>
 
             {/* 4. System Status Card */}
-            <section className="bg-primary-container text-on-primary-container rounded-xl shadow-xs p-6 relative overflow-hidden">
-              <h3 className="text-lg font-bold mb-4 relative z-10">
-                System Status
+            <section className="bg-primary-container text-on-primary-container rounded-xl shadow-xs p-4 sm:p-5 relative overflow-hidden">
+              {/* Subtle Decorative Ambient Background Glow */}
+              <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+              <h3 className="text-base sm:text-lg font-bold mb-4 relative z-10 flex items-center justify-between">
+                <span>System Status</span>
+                <span
+                  className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"
+                  title="System Online"
+                />
               </h3>
-              <div className="space-y-3.5 relative z-10 text-sm">
-                <div className="flex justify-between items-center border-b border-on-primary-container/20 pb-2">
-                  <span className="opacity-90">Version</span>
-                  <span className="font-semibold">v2.4.1 (Stable)</span>
+              <div className="space-y-3 relative z-10 text-xs sm:text-sm">
+                <div className="flex justify-between items-center border-b border-on-primary-container/15 pb-2">
+                  <span className="opacity-80">Version</span>
+                  <span className="font-semibold font-mono text-xs sm:text-sm">
+                    v2.4.1 (Stable)
+                  </span>
                 </div>
-                <div className="flex justify-between items-center border-b border-on-primary-container/20 pb-2">
-                  <span className="opacity-90">Last Backup</span>
+                <div className="flex justify-between items-center border-b border-on-primary-container/15 pb-2">
+                  <span className="opacity-80">Last Backup</span>
                   <span className="font-semibold">Today, 04:00 AM</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="opacity-90">Server Load</span>
+                  <span className="opacity-80">Server Load</span>
                   <span className="font-semibold flex items-center gap-1.5 text-emerald-300">
-                    <CheckCircle2 size={16} />
-                    Normal
+                    <CheckCircle2 size={15} className="shrink-0" />
+                    <span>Normal</span>
                   </span>
                 </div>
               </div>
               <button
                 type="button"
-                className="mt-6 w-full py-2.5 bg-on-primary-container text-primary-container rounded-lg font-semibold text-sm hover:bg-white transition-colors cursor-pointer shadow-xs"
+                className="mt-5 sm:mt-6 w-full py-2.5 bg-on-primary-container text-primary-container rounded-lg font-semibold text-xs sm:text-sm hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer shadow-xs relative z-10"
               >
                 Run Diagnostics
               </button>
