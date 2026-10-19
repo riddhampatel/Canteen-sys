@@ -171,34 +171,35 @@ const SettingCard = ({ search = "" }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6.5 -mt-2">
         {/* Left Column (2 Spans): Roles & Notifications */}
         <div className="lg:col-span-2 flex flex-col gap-8">
-          <section className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant p-6">
-            <div className="flex items-center justify-between mb-5 border-b border-outline-variant pb-4">
+          <section className="bg-surface-container-lowest rounded-xl shadow-xs border border-outline-variant p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-center sm:items-center gap-3 justify-between mb-5 border-b border-outline-variant pb-4">
               <h3 className="text-xl font-semibold flex items-center gap-2">
                 <ShieldCheck size={20} className="text-primary" />
                 Role Management
               </h3>
               {/* //for csv button  */}
-              <button
-                onClick={handleExportCSV}
-                className="flex  items-center gap-2 px-6 py-2 ml-50 bg-primary text-on-primary rounded-lg text-sm font-semibold"
-              >
-                <Download size={18} />
-                User Report
-              </button>
-
-              <button
-                onClick={() => setShowUserForm((visible) => !visible)}
-                className="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 cursor-pointer"
-              >
-                <Plus size={16} />
-                {showUserForm ? "Close" : "Add User"}
-              </button>
+              <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full sm:w-auto">
+                <button
+                  onClick={handleExportCSV}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                >
+                  <Download size={18} />
+                  User Report
+                </button>
+                <button
+                  onClick={() => setShowUserForm((visible) => !visible)}
+                  className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-on-primary rounded-lg text-sm font-semibold transition-colors cursor-pointer shadow-xs"
+                >
+                  <Plus size={16} />
+                  {showUserForm ? "Close" : "Add User"}
+                </button>
+              </div>
             </div>
 
             {showUserForm && (
               <form
                 onSubmit={addUser}
-                className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-3 border-b border-outline-variant pb-5"
+                className="mb-5 grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 border-b border-outline-variant pb-5"
               >
                 <input
                   required
@@ -210,7 +211,7 @@ const SettingCard = ({ search = "" }) => {
                     })
                   }
                   placeholder="Name"
-                  className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+                  className="w-full border border-outline-variant rounded-lg px-3.5 py-2.5 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
                 />
 
                 <input
@@ -224,7 +225,7 @@ const SettingCard = ({ search = "" }) => {
                     })
                   }
                   placeholder="Email"
-                  className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+                  className="w-full border border-outline-variant rounded-lg px-3.5 py-2.5 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
                 />
 
                 <input
@@ -237,7 +238,7 @@ const SettingCard = ({ search = "" }) => {
                     })
                   }
                   placeholder="Department"
-                  className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+                  className="w-full border border-outline-variant rounded-lg px-3.5 py-2.5 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
                 />
 
                 <input
@@ -249,7 +250,7 @@ const SettingCard = ({ search = "" }) => {
                     })
                   }
                   placeholder="Phone"
-                  className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+                  className="w-full border border-outline-variant rounded-lg px-3.5 py-2.5 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
                 />
 
                 <select
@@ -260,7 +261,7 @@ const SettingCard = ({ search = "" }) => {
                       role: event.target.value,
                     })
                   }
-                  className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+                  className="w-full border border-outline-variant rounded-lg px-3.5 py-2.5 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
                 >
                   <option>Employee</option>
                   <option>Operator</option>
@@ -277,12 +278,12 @@ const SettingCard = ({ search = "" }) => {
                     })
                   }
                   placeholder="Permissions"
-                  className="border border-outline-variant rounded-lg px-3 py-2 bg-surface text-sm"
+                  className="w-full border border-outline-variant rounded-lg px-3.5 py-2.5 bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-all"
                 />
 
                 <button
                   type="submit"
-                  className="bg-primary text-on-primary rounded-lg font-semibold text-sm py-2 cursor-pointer"
+                  className="sm:col-span-2 w-full bg-primary hover:bg-primary/90 text-on-primary rounded-lg font-semibold text-sm py-2.5 transition-colors shadow-xs mt-1 cursor-pointer"
                 >
                   Save User
                 </button>
