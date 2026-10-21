@@ -114,47 +114,7 @@ const SettingCard = ({ search = "" }) => {
     URL.revokeObjectURL(url);
   };
 
-  const [feedbackData, setFeedbackData] = useState({
-    name: "",
-    email: "",
-    department: "",
-    message: "",
-  });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-
-  const handleChange = (e) => {
-    setFeedbackData({
-      ...feedbackData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess(false);
-
-    try {
-      await axios.post(`${API_BASE_URL}/feedback`, feedbackData);
-
-      setSuccess(true);
-      setFeedbackData({
-        name: "",
-        email: "",
-        department: "",
-        message: "",
-      });
-    } catch {
-      setError("Failed to submit");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const searchText = (search || "").toLowerCase().trim();
 
   return (
     <div className="p-8 max-w-7xl mx-auto w-full flex flex-col gap-8">

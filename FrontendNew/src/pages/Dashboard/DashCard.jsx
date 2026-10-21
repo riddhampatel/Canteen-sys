@@ -32,13 +32,13 @@ const DateFilter = ({ period, onPeriodChange }) => {
   ];
 
   return (
-    <div className="inline-flex bg-surface-container-low rounded-lg p-1 border border-outline-variant shadow-xs">
+    <div className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex bg-surface-container-low rounded-lg p-1 border border-outline-variant shadow-xs">
       {options.map((opt) => (
         <button
           key={opt.value}
           type="button"
           onClick={() => onPeriodChange(opt.value)}
-          className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+          className={`px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer text-center ${
             period === opt.value
               ? "bg-primary text-on-primary shadow-xs"
               : "text-on-surface-variant hover:text-on-surface"
@@ -162,92 +162,37 @@ const DashCards = () => {
 
   const chartData = getChartData();
 
-  const barSize = period === "today" ? 100 : period === "week" ? 14 : 7;
+  // const barSize = period === "today" ? 100 : period === "week" ? 14 : 7;
+    const barSize = period === "today" ? 55 : period === "week" ? 12 : 6;
 
   return (
-    <main className="flex-1 flex flex-col w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-8 max-w-7xl">
+    // <main className="flex-1 flex flex-col w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-8 max-w-7xl">
+   <main className="flex-1 flex flex-col w-full mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 pb-20 md:pb-8 max-w-7xl"> 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-on-surface">
+          <h1 className="text-xl sm:text-2xl font-bold text-on-surface">
             Dashboard Overview
           </h1>
-          <p className="text-sm text-on-surface-variant">
+          <p className="text-sm sm:text-sm mt-0.5 text-on-surface-variant">
             Monitoring meal service
           </p>
         </div>
       </div>
 
       {/* KPI Cards */}
-      {/* <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-  
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex items-start justify-between">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
-              Total Meals
-            </div>
-            <div className="text-4xl font-bold text-primary">
-              {stats.totalMealsToday?.toLocaleString() || "--"}
-            </div>
-            <div className="text-sm text-secondary mt-2 flex items-center gap-1">
-              <ArrowUp size={16} className="text-emerald-600" />
-              <span>meal consumption</span>
-            </div>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-primary-fixed text-primary flex items-center justify-center shrink-0">
-            <Utensils size={22} />
-          </div>
-        </div>
-
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex items-start justify-between">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
-              Active Employees
-            </div>
-            <div className="text-4xl font-bold text-primary">
-              {stats.activeEmployees?.toLocaleString() || "--"}
-            </div>
-            <div className="text-sm text-secondary mt-2 flex items-center gap-1">
-              <span className="text-outline text-base font-bold">-</span>
-              <span>Current employees</span>
-            </div>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant flex items-center justify-center shrink-0">
-            <BriefcaseBusiness size={22} />
-          </div>
-        </div>
-
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex items-start justify-between">
-          <div>
-            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
-              Today's Menu Status
-            </div>
-            <div className="text-4xl font-bold text-primary">
-              {stats.menuStatus || "--"}
-            </div>
-            <div className="text-sm text-secondary mt-2 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-              <span>Menu service</span>
-            </div>
-          </div>
-          <div className="w-12 h-12 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center shrink-0">
-            <CircleCheck size={22} />
-          </div>
-        </div>
-      </section> */}
-
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5 mb-6 sm:mb-8">
         {/* Total Meals */}
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 lg:p-6 flex items-start justify-between gap-3 sm:gap-4">
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 sm:mb-2 truncate">
+            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 truncate">
               Total Meals
             </div>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary truncate">
               {stats.totalMealsToday?.toLocaleString() || "--"}
             </div>
-            <div className="text-xs sm:text-sm text-secondary mt-1.5 sm:mt-2 flex items-center gap-1">
-              <ArrowUp size={16} className="text-emerald-600 shrink-0" />
+            <div className="text-xs sm:text-sm text-secondary mt-1.5 flex items-center gap-1">
+              <ArrowUp size={15} className="text-emerald-600 shrink-0" />
               <span className="truncate">meal consumption</span>
             </div>
           </div>
@@ -257,18 +202,16 @@ const DashCards = () => {
         </div>
 
         {/* Active Employees */}
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 lg:p-6 flex items-start justify-between gap-3 sm:gap-4">
+       <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 sm:mb-2 truncate">
+            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 truncate">
               Active Employees
             </div>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary truncate">
               {stats.activeEmployees?.toLocaleString() || "--"}
             </div>
-            <div className="text-xs sm:text-sm text-secondary mt-1.5 sm:mt-2 flex items-center gap-1">
-              <span className="text-outline text-sm sm:text-base font-bold">
-                -
-              </span>
+            <div className="text-xs sm:text-sm text-secondary mt-1.5 flex items-center gap-1">
+              <span className="text-outline text-xs sm:text-sm font-bold">-</span>
               <span className="truncate">Current employees</span>
             </div>
           </div>
@@ -278,15 +221,15 @@ const DashCards = () => {
         </div>
 
         {/* Menu Status */}
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 lg:p-6 flex items-start justify-between gap-3 sm:gap-4 sm:col-span-2 lg:col-span-1">
+       <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3 sm:col-span-2 lg:col-span-1">
           <div className="min-w-0 flex-1">
-            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 sm:mb-2 truncate">
+            <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 truncate">
               Today's Menu Status
             </div>
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary truncate">
               {stats.menuStatus || "--"}
             </div>
-            <div className="text-xs sm:text-sm text-secondary mt-1.5 sm:mt-2 flex items-center gap-1.5">
+            <div className="text-xs sm:text-sm text-secondary mt-1.5 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
               <span className="truncate">Menu service</span>
             </div>
@@ -298,19 +241,19 @@ const DashCards = () => {
       </section>
 
       {/* Main Bar Chart  */}
-      <section className="grid grid-cols-1 gap-6 mb-8">
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <section className="grid grid-cols-1 gap-6 mb-6 sm:mb-8">
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-5">
             <div>
-              <h2 className="font-bold text-xl text-on-surface">
+              <h2 className="font-bold text-lg sm:text-xl text-on-surface">
                 {period === "today"
                   ? "Today's Meal Volume"
                   : period === "week"
                     ? "Weekly Meal Volume"
                     : "Monthly Meal Volume"}
               </h2>
-              <p className="text-sm text-on-surface-variant mt-1">
-                Meal visual reperentatino
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
+                Meal visual representation
               </p>
             </div>
 
@@ -330,11 +273,7 @@ const DashCards = () => {
                     stroke="#e5e7eb"
                     vertical={false}
                   />
-                  {/* <XAxis
-  dataKey="label"
-  interval={0}
-  tick={{ fontSize: 10 }}
-/> */}
+
                   <XAxis
                     dataKey="label"
                     interval={0}
