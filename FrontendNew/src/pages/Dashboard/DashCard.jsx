@@ -163,11 +163,11 @@ const DashCards = () => {
   const chartData = getChartData();
 
   // const barSize = period === "today" ? 100 : period === "week" ? 14 : 7;
-    const barSize = period === "today" ? 55 : period === "week" ? 12 : 6;
+  const barSize = period === "today" ? 55 : period === "week" ? 12 : 6;
 
   return (
     // <main className="flex-1 flex flex-col w-full mx-auto px-4 md:px-8 py-6 pb-24 md:pb-8 max-w-7xl">
-   <main className="flex-1 flex flex-col w-full mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 pb-20 md:pb-8 max-w-7xl"> 
+    <main className="flex-1 flex flex-col w-full mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 pb-20 md:pb-8 max-w-7xl">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-5 sm:mb-6">
         <div>
@@ -202,7 +202,7 @@ const DashCards = () => {
         </div>
 
         {/* Active Employees */}
-       <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3">
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 truncate">
               Active Employees
@@ -211,7 +211,9 @@ const DashCards = () => {
               {stats.activeEmployees?.toLocaleString() || "--"}
             </div>
             <div className="text-xs sm:text-sm text-secondary mt-1.5 flex items-center gap-1">
-              <span className="text-outline text-xs sm:text-sm font-bold">-</span>
+              <span className="text-outline text-xs sm:text-sm font-bold">
+                -
+              </span>
               <span className="truncate">Current employees</span>
             </div>
           </div>
@@ -221,7 +223,7 @@ const DashCards = () => {
         </div>
 
         {/* Menu Status */}
-       <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3 sm:col-span-2 lg:col-span-1">
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-5 flex items-start justify-between gap-3 sm:col-span-2 lg:col-span-1">
           <div className="min-w-0 flex-1">
             <div className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1 truncate">
               Today's Menu Status
@@ -260,72 +262,94 @@ const DashCards = () => {
             <DateFilter period={period} onPeriodChange={setPeriod} />
           </div>
 
-          <div className="h-80 w-full">
+          {/* Chart */}
+          <div className="h-64 sm:h-80 w-full">
             {chartData && chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={chartData}
-                  barGap={period === "today" ? 10 : 3}
-                  barCategoryGap={period === "today" ? "25%" : "15%"}
+                  margin={{
+                    top: 10,
+                    right: 10,
+                    left: -15,
+                    bottom: period === "month" ? 25 : 10,
+                  }}
+                  barGap={period === "today" ? 8 : 2}
+                  barCategoryGap={period === "today" ? "20%" : "12%"}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="#e5e7eb"
                     vertical={false}
                   />
-
                   <XAxis
                     dataKey="label"
                     interval={0}
                     tick={{ fontSize: 9 }}
-                    angle={period === "month" ? -50 : 0}
-                    textAnchor={period === "month" ? "end" : "start"}
-                    height={period === "month" ? 50 : 30}
+                    angle={period === "month" || period === "week" ? -35 : 0}
+                    textAnchor={
+                      period === "month" || period === "week" ? "end" : "middle"
+                    }
+                    height={period === "month" || period === "week" ? 45 : 30}
                   />
 
-                  <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
-                  <Tooltip />
+                  <YAxis
+                    tick={{ fontSize: 11 }}
+                    allowDecimals={false}
+                    width={35}
+                  />
+                  <Tooltip
+                    labelFormatter={(label, payload) => {
+                      const itemData = payload?.[0]?.payload;
+                      return itemData?.time
+                        ? `${label} (${itemData.time})`
+                        : label;
+                    }}
+                  />
 
                   <Legend
                     verticalAlign="top"
                     align="right"
                     iconType="circle"
-                    layout="auto"
-                    wrapperStyle={{ paddingTop: "14px", fontSize: "13px" }}
+                    wrapperStyle={{
+                      paddingTop: "0px",
+                      paddingBottom: "12px",
+                      fontSize: "11px",
+                    }}
                   />
 
                   <Bar
                     dataKey="breakfast"
                     name="Breakfast"
                     fill={MEAL_COLORS.breakfast}
-                    radius={[4, 4, 0, 0]}
+                    radius={[3, 3, 0, 0]}
                     maxBarSize={barSize}
                   />
                   <Bar
                     dataKey="lunch"
                     name="Lunch"
                     fill={MEAL_COLORS.lunch}
-                    radius={[4, 4, 0, 0]}
+                    radius={[3, 3, 0, 0]}
                     maxBarSize={barSize}
                   />
                   <Bar
                     dataKey="snacks"
                     name="Snacks"
                     fill={MEAL_COLORS.snacks}
-                    radius={[4, 4, 0, 0]}
+                    radius={[3, 3, 0, 0]}
                     maxBarSize={barSize}
                   />
                   <Bar
                     dataKey="dinner"
                     name="Dinner"
                     fill={MEAL_COLORS.dinner}
-                    radius={[4, 4, 0, 0]}
+                    radius={[3, 3, 0, 0]}
                     maxBarSize={barSize}
                   />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-sm text-on-surface-variant">
+              <div className="h-full flex items-center justify-center text-xs sm:text-sm text-on-surface-variant">
                 No meal data available for this period.
               </div>
             )}
@@ -335,29 +359,29 @@ const DashCards = () => {
 
       {/* Table & Alerts Section */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Table */}
+        {/* Table Container */}
         <div className="lg:col-span-2 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm flex flex-col overflow-hidden">
-          <div className="p-6 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h2 className="font-bold text-2xl text-on-surface">
+          <div className="p-4 sm:p-5 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+            <h2 className="font-bold text-lg sm:text-xl text-on-surface">
               Who Ate Today
             </h2>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
               <button
                 onClick={handleExportCSV}
-                className="flex items-center justify-center gap-2 px-5 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:opacity-90 transition cursor-pointer"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg text-xs sm:text-sm font-semibold hover:opacity-90 transition cursor-pointer w-full sm:w-auto shrink-0 shadow-xs"
               >
-                <Download size={18} />
-                Dashboard Report
+                <Download size={16} />
+                Export CSV
               </button>
 
-              <div className="relative w-full sm:w-64">
+              <div className="relative w-full sm:w-56">
                 <Search
-                  size={18}
+                  size={16}
                   className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant"
                 />
                 <input
-                  className="bg-surface w-full pl-10 pr-4 py-2 border border-outline-variant rounded-md text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                  className="bg-surface w-full pl-9 pr-3 py-1.5 sm:py-2 border border-outline-variant rounded-md text-xs sm:text-sm text-on-surface placeholder:text-on-surface-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
                   placeholder="Search employee..."
                   type="text"
                   value={search}
@@ -368,7 +392,7 @@ const DashCards = () => {
           </div>
 
           {error && (
-            <div className="p-4 bg-error-container text-on-error-container text-sm">
+            <div className="p-3 bg-error-container text-on-error-container text-xs sm:text-sm">
               {error}
             </div>
           )}
