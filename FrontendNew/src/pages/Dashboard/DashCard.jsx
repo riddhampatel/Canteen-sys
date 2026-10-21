@@ -397,55 +397,55 @@ const DashCards = () => {
             </div>
           )}
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse min-w-120">
               <thead>
                 <tr className="bg-surface-container-low border-b border-outline-variant">
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  <th className="p-3 sm:p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                     Employee
                   </th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  <th className="p-3 sm:p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                     Time
                   </th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  <th className="p-3 sm:p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                     Meal Type
                   </th>
-                  <th className="p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  <th className="p-3 sm:p-4 text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                     Status
                   </th>
                 </tr>
               </thead>
-              <tbody className="text-sm">
+              <tbody className="text-xs sm:text-sm">
                 {recentFiltered.length > 0 ? (
                   recentFiltered.map((item) => (
                     <tr
                       key={item.id}
                       className="border-b border-outline-variant hover:bg-surface-container-low transition-colors"
                     >
-                      <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs shrink-0">
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-xs shrink-0">
                             {item.initials}
                           </div>
                           <div>
-                            <div className="font-medium text-sm text-on-surface">
+                            <div className="font-medium text-xs sm:text-sm text-on-surface">
                               {item.employee_name}
                             </div>
-                            <div className="text-on-surface-variant text-xs">
+                            <div className="text-on-surface-variant text-[11px] sm:text-xs">
                               {item.department}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="p-4 text-on-surface-variant">
+                      <td className="p-3 sm:p-4 whitespace-nowrap text-on-surface-variant">
                         {item.time}
                       </td>
-                      <td className="p-4">
-                        <span className="px-2.5 py-1 bg-surface-container-highest text-on-surface rounded-full text-xs font-medium">
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
+                        <span className="px-2 py-0.5 bg-surface-container-highest text-on-surface rounded-full text-[11px] sm:text-xs font-medium">
                           {item.meal_type}
                         </span>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4 whitespace-nowrap">
                         <span className="flex items-center gap-1 text-emerald-600 font-medium text-xs">
                           <Check size={16} />
                           {item.status}
@@ -457,7 +457,7 @@ const DashCards = () => {
                   <tr>
                     <td
                       colSpan="4"
-                      className="p-8 text-center text-sm text-on-surface-variant"
+                      className="p-6 text-center text-xs sm:text-sm  text-on-surface-variant"
                     >
                       {search
                         ? "No employees found."
@@ -469,35 +469,37 @@ const DashCards = () => {
             </table>
           </div>
 
-          <div className="p-4 border-t border-outline-variant bg-surface flex justify-center">
-            <button className="text-primary font-semibold text-sm hover:underline cursor-pointer">
+          <div className="p-3.5  border-t border-outline-variant bg-surface flex justify-center">
+            <button className="text-primary font-semibold text-xs sm:text-sm hover:underline cursor-pointer">
               View All Records
             </button>
           </div>
         </div>
 
         {/* System Alerts */}
-        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-6 flex flex-col gap-6">
-          <h2 className="font-bold text-xl text-on-surface">System Alerts</h2>
-          <div className="flex flex-col gap-4">
-            <div className="flex gap-3.5 items-start p-4 bg-error-container rounded-lg border border-red-200">
-              <TriangleAlert size={20} className="text-error mt-0.5 shrink-0" />
+         <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-6 flex flex-col gap-4">
+          <h2 className="font-bold text-lg sm:text-xl text-on-surface">
+            System Alerts
+          </h2>
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-3 items-start p-3 sm:p-4 bg-error-container rounded-lg border border-red-200">
+              <TriangleAlert size={18} className="text-error mt-0.5 shrink-0" />
               <div>
-                <div className="font-semibold text-sm text-on-error-container">
+                <div className="font-semibold text-xs sm:text-sm text-on-error-container">
                   {alerts[0]?.title || "No active alerts"}
                 </div>
-                <div className="text-xs text-on-error-container mt-1 opacity-85">
+                <div className="text-[11px] sm:text-xs text-on-error-container mt-0.5 opacity-85">
                   {alerts[0]?.message || "No local alerts are active."}
                 </div>
               </div>
             </div>
-            <div className="flex gap-3.5 items-start p-4 bg-surface-container-low rounded-lg border border-outline-variant">
-              <CircleAlert size={20} className="text-primary mt-0.5 shrink-0" />
+            <div className="flex gap-3 items-start p-3 sm:p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+              <CircleAlert size={18} className="text-primary mt-0.5 shrink-0" />
               <div>
-                <div className="font-semibold text-sm text-on-surface">
+                <div className="font-semibold text-xs sm:text-sm text-on-surface">
                   {alerts[1]?.title || "Dashboard connected"}
                 </div>
-                <div className="text-xs text-on-surface-variant mt-1">
+                <div className="text-[11px] sm:text-xs text-on-surface-variant mt-0.5">
                   {alerts[1]?.message || "Dashboard data is ready for review."}
                 </div>
               </div>
