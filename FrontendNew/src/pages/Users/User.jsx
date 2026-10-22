@@ -1,5 +1,5 @@
 import React from "react";
-import UserNav from "./UserNav";
+import UserNav from "./UserNav2";
 import UserCard from "./UserCard";
 import { useState } from "react";
 

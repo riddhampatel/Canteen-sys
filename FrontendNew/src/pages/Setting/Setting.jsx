@@ -1,6 +1,6 @@
 import React from "react";
 import SettingSidebar from "./SettingSidebar";
-import SettingNav from "./SettingNav";
+import SettingNav from "./SettingNav2";
 import SettingCard from "./Settingcard";
 import { useState } from "react";
 

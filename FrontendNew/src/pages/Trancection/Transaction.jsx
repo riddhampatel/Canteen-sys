@@ -1,6 +1,6 @@
 import React from "react";
 import TransactionSidebar from "./TransactionSidebar";
-import TransactionNav from "./TransactionNav";
+import TransactionNav from "./TransactionNav2";
 // import TransactionCard from "./TransactionCard";
 import TransactionCard from "./TransactionCard";
 import { useState } from "react";
