@@ -3,7 +3,7 @@ import { Bell, HelpCircle } from "lucide-react";
 
 const DashNav = () => {
   return (
-    <header className="flex justify-between items-center w-full px-4 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40">
+   <header className="flex justify-between items-center w-full px-3.5 sm:px-6 md:px-8 h-16 bg-surface-container-lowest shadow-sm border-b border-outline-variant sticky top-0 z-40 transition-all">  
       {/* Mobile Title */}
       <div className="md:hidden font-bold text-lg text-primary">CanteenPro</div>
 
