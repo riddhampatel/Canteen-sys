@@ -1,6 +1,5 @@
 import DashNav from "./DashNav.jsx";
 import DashCards from "./DashCard.jsx";
-import DashSidebar from "./DashSidebar.jsx";
 import { useState } from "react";
 
 export default function Dashboard() {

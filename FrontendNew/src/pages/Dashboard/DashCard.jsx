@@ -477,7 +477,7 @@ const DashCards = () => {
         </div>
 
         {/* System Alerts */}
-         <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-6 flex flex-col gap-4">
+        <div className="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm p-4 sm:p-6 flex flex-col gap-4">
           <h2 className="font-bold text-lg sm:text-xl text-on-surface">
             System Alerts
           </h2>

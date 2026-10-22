@@ -430,7 +430,7 @@ const SettingCard = ({ search = "" }) => {
               <h3 className="text-base sm:text-lg font-bold mb-4 relative z-10 flex items-center justify-between">
                 <span>System Status</span>
                 <span
-                  className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"
+                  className="w-2.5 h-2.5 rounded-full bg-emerald-400"
                   title="System Online"
                 />
               </h3>

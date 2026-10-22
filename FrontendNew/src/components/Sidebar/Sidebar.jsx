@@ -17,19 +17,19 @@ const Sidebar = () => {
   const isUser = path === "/users";
   const isTransaction = path === "/transactions";
   const isSetting = path === "/settings";
-  
+
   const ITEMS = [
-  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-  { name: "Menu Management", path: "/menu", icon: Utensils },
-  { name: "User Records", path: "/users", icon: UsersRound },
-  { name: "Transactions", path: "/transactions", icon: ReceiptIndianRupee },
-  { name: "Settings", path: "/settings", icon: Settings },
-];
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+    { name: "Menu Management", path: "/menu", icon: Utensils },
+    { name: "User Records", path: "/users", icon: UsersRound },
+    { name: "Transactions", path: "/transactions", icon: ReceiptIndianRupee },
+    { name: "Settings", path: "/settings", icon: Settings },
+  ];
 
   return (
-    <aside className="w-16 lg:w-64 h-screen bg-surface-container-lowest border-r border-outline-variant py-6 px-4 fixed left-0 top-0 z-40 flex flex-col shadow-xs">  
-      {/* Dynamic Brand Header */}
-      <div className="flex items-center gap-3 mb-8 px-2">
+    <aside className="w-16 lg:w-64 h-screen sticky top-0 shrink-0 bg-surface-container-lowest border-r border-outline-variant py-6 px-2 lg:px-4 flex flex-col shadow-xs transition-all duration-200 z-30">
+      {/* Brand Header */}
+      <div className="flex items-center justify-center lg:justify-start gap-3 mb-8 px-0 lg:px-2">
         {isDashboard && (
           <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary font-bold text-lg shadow-sm shrink-0">
             C
@@ -38,13 +38,15 @@ const Sidebar = () => {
 
         {isMenu && (
           <img
+            alt="Menu"
             className="w-10 h-10 rounded-full bg-surface-container-highest object-cover shadow-xs border border-outline-variant shrink-0"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEYd1MEMoFC7kdw4OZdujkBJceoaIiNKjB6RCHLUbkC_rKtDEauI0N5TRacw69ybHWBB9eRaRJXynwusWjY2RhUcOckQeCXmOTHFcHoqvWhyaW7dNNNjBBpQjTBpKQmxzUR56Q1VUoEGhBU-IxXNhAnyowgbqwhFuHNUUJ41xqwq1c78JTM7cqP1MHJ8wRxmYmU_0iIfTrFo0PIe_ojQBFHx53VBJbjzmWUyDSpa7lVFoqEGrs07bZVYJ5HwarXkI_4iltmmPtm80"
           />
         )}
- 
+
         {isTransaction && (
           <img
+            alt="Transactions"
             className="w-10 h-10 rounded-lg object-cover shadow-xs border border-outline-variant shrink-0"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrPKwUVkWfPhu7o1aDWix5VJBHKUmAL7bLIvKpwQYT5d4nBAu0cMLQnX84BfoCP0zzR1bYK7j96CoRAyLUsNjLEbBKeU5v9eQWWKusQYyzCwyK5t8TlXj8UemeBpZI2Hgy3F92z9vsCmw-1Pdiu3IJzVgDoPGCvq9jcM8D2Mqrf7LdrtbKiE1c7CAdTgk3JYUqMlxmOhi_uJ-qDMa2FG5jPJxXklYRhd7ZWYppI39kknUqDMTHNcdHHykfLStufd3Ohi0eo-AQGNs"
           />
@@ -56,8 +58,7 @@ const Sidebar = () => {
           </div>
         )}
 
-        {/* Brand Text */}
-        <div className="overflow-hidden">
+        <div className="overflow-hidden hidden lg:block">
           <h1 className="text-lg font-bold text-on-surface leading-tight truncate">
             {isDashboard || isMenu ? "Admin Panel" : "Canteen Admin"}
           </h1>
@@ -75,28 +76,30 @@ const Sidebar = () => {
             <NavLink
               key={item.path}
               to={item.path}
+              title={item.name}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
+                `flex items-center justify-center lg:justify-start gap-3 px-2 lg:px-3.5 py-2.5 rounded-lg text-sm font-semibold transition-all active:scale-95 ${
                   isActive
                     ? "bg-primary-fixed text-primary font-bold shadow-xs"
                     : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
                 }`
               }
             >
-              <Icon size={20} />
-              <span>{item.name}</span>
+              <Icon size={20} className="shrink-0" />
+              <span className="hidden lg:inline truncate">{item.name}</span>
             </NavLink>
           );
         })}
       </nav>
 
+      {/* Transaction section */}
       {isTransaction && (
-        <div className="mt-auto pt-4 border-t border-outline-variant flex items-center gap-3 px-2">
+        <div className="mt-auto pt-4 border-t border-outline-variant flex items-center justify-center lg:justify-start gap-3 px-0 lg:px-2">
           <img
             className="w-8 h-8 rounded-full object-cover border border-outline-variant shrink-0"
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHTZ1uHDRuboIhQb6wZxoyCDyq94Nr4jW2xpKJ8GHsduu6Vx0pffB7gWo8KuFB3THkF4geOoUtL8npPW0gzvEI1eeKgyI7rIAm7v5zuIJISijyGjtNygZmwGDret8y69BGU0pbxb7ESjfx552sdPXZdUhJae2qnTlmPSH3IL0PldkhXhYl8I2kwitWacc3bZL2DnfmPf2LaNPskgAQJL2HivPIpaP1cp_e6AFNUF4eeuu4OWiGkwZFTOk5JfH7Ia54DmK3A3pjIj0"
           />
-          <div className="flex flex-col overflow-hidden">
+          <div className="flex-col overflow-hidden hidden lg:flex">
             <span className="text-xs font-semibold text-on-surface truncate">
               Admin User
             </span>
@@ -107,18 +110,18 @@ const Sidebar = () => {
         </div>
       )}
 
+      {/* Seting section  */}
       {isSetting && (
-        <div className="mt-auto pt-4 border-t border-outline-variant px-2">
+        <div className="mt-auto pt-4 border-t border-outline-variant px-0 lg:px-2">
           <button
             type="button"
-            className="flex items-center gap-2.5 px-3 py-4.5 w-full text-[15px] font-semibold text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition-colors cursor-pointer"
+            className="flex items-center justify-center lg:justify-start gap-2.5 px-2 lg:px-3 py-3 lg:py-4.5 w-full text-[15px] font-semibold text-on-surface-variant hover:text-error hover:bg-error-container/40 rounded-lg transition-colors cursor-pointer"
           >
-            <LogOut size={16} />
-            <span>Sign Out</span>
+            <LogOut size={16} className="shrink-0" />
+            <span className="hidden lg:inline">Sign Out</span>
           </button>
         </div>
       )}
-
     </aside>
   );
 };
