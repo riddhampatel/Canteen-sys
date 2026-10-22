@@ -1,5 +1,5 @@
 import { useState } from "react";
-import MenuNav from "./MenuNav";
+import MenuNav from "./MenuNav2";
 import MenuCard from "./MenuCard";
 
 export default function Menu() {
