@@ -17,17 +17,17 @@ const Sidebar = () => {
   const isUser = path === "/users";
   const isTransaction = path === "/transactions";
   const isSetting = path === "/settings";
-
+  
   const ITEMS = [
-    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-    { name: "Menu Management", path: "/menu", icon: Utensils },
-    { name: "User Records", path: "/users", icon: UsersRound },
-    { name: "Transactions", path: "/transactions", icon: ReceiptIndianRupee },
-    { name: "Settings", path: "/settings", icon: Settings },
-  ];
+  { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { name: "Menu Management", path: "/menu", icon: Utensils },
+  { name: "User Records", path: "/users", icon: UsersRound },
+  { name: "Transactions", path: "/transactions", icon: ReceiptIndianRupee },
+  { name: "Settings", path: "/settings", icon: Settings },
+];
 
   return (
-    <aside className="w-64 h-screen bg-surface-container-lowest border-r border-outline-variant py-6 px-4 fixed left-0 top-0 z-40 flex flex-col shadow-xs">
+    <aside className="w-16 lg:w-64 h-screen bg-surface-container-lowest border-r border-outline-variant py-6 px-4 fixed left-0 top-0 z-40 flex flex-col shadow-xs">  
       {/* Dynamic Brand Header */}
       <div className="flex items-center gap-3 mb-8 px-2">
         {isDashboard && (
@@ -42,7 +42,7 @@ const Sidebar = () => {
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEYd1MEMoFC7kdw4OZdujkBJceoaIiNKjB6RCHLUbkC_rKtDEauI0N5TRacw69ybHWBB9eRaRJXynwusWjY2RhUcOckQeCXmOTHFcHoqvWhyaW7dNNNjBBpQjTBpKQmxzUR56Q1VUoEGhBU-IxXNhAnyowgbqwhFuHNUUJ41xqwq1c78JTM7cqP1MHJ8wRxmYmU_0iIfTrFo0PIe_ojQBFHx53VBJbjzmWUyDSpa7lVFoqEGrs07bZVYJ5HwarXkI_4iltmmPtm80"
           />
         )}
-
+ 
         {isTransaction && (
           <img
             className="w-10 h-10 rounded-lg object-cover shadow-xs border border-outline-variant shrink-0"
@@ -118,6 +118,7 @@ const Sidebar = () => {
           </button>
         </div>
       )}
+
     </aside>
   );
 };
